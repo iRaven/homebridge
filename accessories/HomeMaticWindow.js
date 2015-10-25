@@ -23,7 +23,8 @@ HomeMaticWindow.prototype = {
       if (!err && response.statusCode == 200) {
         
         //that.log("Response:"+response.body);
-        var responseString = response.body.substring(83,84);
+        var index = response.body.indexOf("value='");
+        var responseString = response.body.substring(index+7,index+8);
         //that.log(responseString);
 	    switch(responseString){
 		              case "0": {callback(Characteristic.ContactSensorState.CONTACT_DETECTED);break;}
