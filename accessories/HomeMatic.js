@@ -15,7 +15,7 @@ HomeMatic.prototype = {
     var binaryState = powerOn ? 1 : 0;
     var that = this;
     
-    this.log("Setting power state of CCU to " + powerOn);
+    this.log("Setting Power state of CCU to " + powerOn);
     this.log(this.ccuID+ powerOn);
     
     	request.put({
@@ -26,7 +26,7 @@ HomeMatic.prototype = {
         that.log("State change complete.");
       }
       else {
-        that.log("Error '"+err+"' setting lock state: " + body);
+        that.log("Error '"+err+"' setting Power state: " + body);
       }
     });
   },
@@ -41,11 +41,15 @@ HomeMatic.prototype = {
       if (!err && response.statusCode == 200) {
         
         //that.log("Response:"+response.body);
-        var responseString = response.body.substring(83,87);
+        var index = response.body.indexOf("value='");
+        var responseString = response.body.substring(index+7,index+8);
+        var modvalue = "0";
         //that.log(responseString);
 		switch(responseString){
-		  case "true": {modvalue = "1";break;}
-		  case "fals": {modvalue = "0";break;} 
+		  case "t": {modvalue = "1";break;}
+		  case "f": {modvalue = "0";break;} 
+		  case "1": {modvalue = "1";break;} 
+		  case "0": {modvalue = "0";break;} 
 	    }
         callback(parseInt(modvalue));
         that.log("Getting Power State complete.");
