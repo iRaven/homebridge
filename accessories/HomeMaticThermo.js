@@ -45,7 +45,8 @@ HomeMaticThermo.prototype = {
       if (!err && response.statusCode == 200) {
         
         //that.log("Response:"+response.body);
-        var responseString = response.body.substring(83,87);
+        var index = response.body.indexOf("value='");
+        var responseString = response.body.substring(index+7,index+11);
         //that.log(responseString);
         callback(parseFloat(responseString));
         //that.log("Getting current temperature complete.");
@@ -66,8 +67,9 @@ this.log("Getting target Temperature of CCU");
 
       if (!err && response.statusCode == 200) {
         
-        //that.log("Response:"+response.body);
-        var responseString = response.body.substring(83,87);
+        //that.log("Response:"+response.body); 		
+        var index = response.body.indexOf("value='");
+        var responseString = response.body.substring(index+7,index+11);
         //that.log(responseString);
         callback(parseFloat(responseString));
         //that.log("Getting target temperature complete.");
@@ -91,7 +93,8 @@ this.log("Getting target Temperature of CCU");
       if (!err && response.statusCode == 200) {
         
         //that.log("Response:"+response.body);
-        var responseInt = response.body.substring(83,84);
+        var index = response.body.indexOf("value='");
+        var responseString = response.body.substring(index+7,index+8);
         //that.log(responseString);
         if (responseInt == 1) 
         { callback(parseInt("0")); }
