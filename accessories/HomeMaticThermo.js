@@ -8,7 +8,8 @@ function HomeMaticThermo(log, config) {
   this.ccuIDCurrentTemp = config["ccu_id_CurrentTemp"];
   this.ccuIDControlMode = config["ccu_id_ControlMode"];
   this.ccuIDManuMode = config["ccu_id_ManuMode"];
-  this.ccuIDAutoMode = config["ccu_id_AutoMode"];  
+  this.ccuIDAutoMode = config["ccu_id_AutoMode"]; 
+  this.ccuIDBoostMode = config["ccu_id_BoostMode"];  
   this.ccuIP = config["ccu_ip"];
 }
 
@@ -98,6 +99,36 @@ this.log("Getting target Temperature of CCU");
         //that.log(responseString);
         if (responseInt == 1)  //manu
         { callback(parseInt("0")); }
+        if (responseInt == 0)  //auto -> heating
+        { callback(parseInt("1")); }
+        if (responseInt == 2) //party -> manu
+        { callback(parseInt("0")); }
+        if (responseInt == 3) //boost -> heating
+        { callback(parseInt("1")); }
+        //that.log("Getting mode complete.");
+      }
+      else {
+        that.log("Error '"+err+"' getting Mode: " + body);
+      }
+    });
+  },
+  getTargetMode: function(callback) {
+    var that = this;
+    this.log("Getting target Mode of CCU");
+    //this.log(this.ccuID+ value);
+    
+    request.get({
+      url: "http://"+this.ccuIP+"/config/xmlapi/state.cgi?datapoint_id="+this.ccuIDControlMode,
+    }, function(err, response, body) {
+
+      if (!err && response.statusCode == 200) {
+        
+        //that.log("Response:"+response.body);
+        var index = response.body.indexOf("value='");
+        var responseInt = response.body.substring(index+7,index+8);
+        //that.log(responseString);
+        if (responseInt == 1)  //manu
+        { callback(parseInt("0")); }
         if (responseInt == 0)  //auto 
         { callback(parseInt("3")); }
         if (responseInt == 2) //party -> manu
@@ -120,7 +151,7 @@ this.log("Getting target Temperature of CCU");
 	var dpID;
 	switch(value) {
 		case 3: {modvalue = "true";dpID=this.ccuIDAutoMode;break;} //auto 
-		case 1: {modvalue = "true";dpID=this.ccuIDAutoMode;break;} //heating => auto
+		case 1: {modvalue = "true";dpID=this.ccuIDBoostMode;break;} //heating => Boost
 		default: {modvalue = "1";dpID=this.ccuIDManuMode;}         //default => off (manual)
 	}
 
@@ -218,7 +249,7 @@ this.log("Getting target Temperature of CCU");
 		designedMinStep: 1,  
     },{
     	cType: types.TARGETHEATINGCOOLING_CTYPE,
-		onRead: function(callback) { that.getMode(callback); },
+		onRead: function(callback) { that.getTargetMode(callback); },
     	onUpdate: function(value) { that.setMode(value);},
     	perms: ["pw","pr","ev"],
 		format: "int",
