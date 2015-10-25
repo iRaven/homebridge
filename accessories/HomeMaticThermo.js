@@ -96,9 +96,13 @@ this.log("Getting target Temperature of CCU");
         var index = response.body.indexOf("value='");
         var responseString = response.body.substring(index+7,index+8);
         //that.log(responseString);
-        if (responseInt == 1) 
+        if (responseInt == 1)  //manu
         { callback(parseInt("0")); }
-        if (responseInt == 0) 
+        if (responseInt == 0)  //auto 
+        { callback(parseInt("3")); }
+        if (responseInt == 2) //party -> manu
+        { callback(parseInt("0")); }
+        if (responseInt == 3) //boost -> heating
         { callback(parseInt("1")); }
         //that.log("Getting mode complete.");
       }
